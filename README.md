@@ -1,4 +1,4 @@
-# cloudflared
+# Cloudflare tunnel with PowerShell
 
 Connect a local Cloudflare tunnel to you network in a few easy steps.
 
@@ -12,7 +12,7 @@ Download and extract `cloudflared` [from Cloudflare](https://developers.cloudfla
 
 # 3. Run the script to connect your tunnel
 
-To connect a tunnel routing the default set of services (see [here](https://github.com/stefanes/cloudflared/blob/main/connect-tunnel.ps1#L6-L14)):
+To connect a tunnel routing the default set of services (see [here](https://github.com/stefanes/cloudflared/blob/main/connect-tunnel.ps1#L10-L21)):
 
 ```powershell
 & .\cloudflared\connect-tunnel.ps1 -CloudflaredPath 'C:\path\to\cloudflared.exe' -HostName 'myhostname.tk'
