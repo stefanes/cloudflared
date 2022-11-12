@@ -9,7 +9,7 @@ param (
 
   [string] $Service = 'http://homeassistant.local:8123',
 
-  [Object] $AdditionalServices = @(
+  [Object] $DefaultServices = @(
     @{
       domain  = 'status'
       service = 'http://homeassistant.local:4357'
@@ -20,12 +20,14 @@ param (
     }
   ),
 
+  [Object] $AdditionalServices = @(),
+
   [Alias('Tunnel')]
   [string] $TunnelName = ($HostName -replace '[^a-z0-9]', '-')
 )
 
 Write-Host "Logging in to Cloudflare..." -ForegroundColor Green
-Write-Host "Note: Choose any website that you have added into your account. The authentication is account-wide and you can use the same authentication flow for multiple hostnames in your account regardless of which you choose in this step."
+Write-Host "Note: Choose any website that you have added into your account. The authentication is account-wide and you can use the same authentication flow for multiple hostnames in your account regardless of which you choose in this step." -ForegroundColor DarkGray
 if (-Not (Test-Path -Path "$env:USERPROFILE\.cloudflared\cert.pem")) {
   & $CloudflaredPath tunnel login
 }
@@ -56,7 +58,7 @@ if (-Not $tunnelUuid) {
     }
   }
 }
-$tunnelList | Out-Host
+Write-Host ($tunnelList | Out-String) -ForegroundColor DarkGray
 
 Write-Host "Creating tunnel config..." -ForegroundColor Green
 $config = @"
@@ -69,6 +71,16 @@ ingress:
     originRequest:
       noTLSVerify: true
 "@
+# Default services
+foreach ($additionalService in $DefaultServices) {
+  $config += @"
+
+  - hostname: $($additionalService.domain).$HostName
+    service: $($additionalService.service)
+    originRequest:
+      noTLSVerify: true
+"@
+}
 # Additional services
 foreach ($additionalService in $AdditionalServices) {
   $config += @"
@@ -89,6 +101,9 @@ Get-Content -Path "$env:USERPROFILE\.cloudflared\$tunnelUuid.yml"
 
 Write-Host "Creating DNS entries..." -ForegroundColor Green
 & $CloudflaredPath tunnel route dns -f $tunnelUuid "$HostName"
+foreach ($additionalService in $DefaultServices) {
+  & $CloudflaredPath tunnel route dns -f $tunnelUuid "$($additionalService.domain).$HostName"
+}
 foreach ($additionalService in $AdditionalServices) {
   & $CloudflaredPath tunnel route dns -f $tunnelUuid "$($additionalService.domain).$HostName"
 }

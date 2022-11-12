@@ -18,14 +18,25 @@ To connect a tunnel routing the default set of services (see [here](https://gith
 & .\cloudflared\connect-tunnel.ps1 -CloudflaredPath 'C:\path\to\cloudflared.exe' -HostName 'myhostname.tk'
 ```
 
-To route other services, provide the `-AdditionalServices` parameter:
+To route other services, provide your own services using the `-DefaultServices` parameter:
+
+```powershell
+& .\cloudflared\connect-tunnel.ps1 -CloudflaredPath 'C:\path\to\cloudflared.exe' -HostName 'myhostname.tk' -Service 'http://192.168.2.100:8080' -DefaultServices @(
+    @{
+        domain  = 'www'
+        service = 'http://192.168.2.100:8080'
+    }
+    @{
+        domain  = 'router'
+        service = 'http://192.168.2.1'
+    }
+)
+```
+
+Or include additional services (in addition to the default services) using the `-AdditionalServices` parameter:
 
 ```powershell
 & .\cloudflared\connect-tunnel.ps1 -CloudflaredPath 'C:\path\to\cloudflared.exe' -HostName 'myhostname.tk' -Service 'http://192.168.1.100:8080' -AdditionalServices @(
-    @{
-        domain  = 'www'
-        service = 'http://192.168.1.100:8080'
-    }
     @{
         domain  = 'something'
         service = 'http://192.168.1.254'
