@@ -1,4 +1,4 @@
-# Cloudflare tunnel with PowerShell
+# Cloudflare tunnels with PowerShell
 
 Connect a local Cloudflare tunnel to you network in a few easy steps.
 
@@ -42,4 +42,15 @@ Or include additional services (in addition to the default services) using the `
         service = 'http://192.168.1.254'
     }
 )
+```
+
+# Home Assistant
+
+If using this with Home Assistant you need to do one more thing. Since Home Assistant blocks requests from unknown proxies/reverse proxies, you need to tell your instance to [trust Cloudflare](https://www.home-assistant.io/integrations/http/#trusted_proxies) by adding this to your `configuration.yaml`:
+
+```
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 172.30.33.0/24
 ```
