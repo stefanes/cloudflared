@@ -48,7 +48,7 @@ Or include additional services (in addition to the default services) using the `
 
 If using this with Home Assistant you need to do one more thing. Since Home Assistant blocks requests from unknown proxies/reverse proxies, you need to tell your instance to [trust Cloudflare](https://www.home-assistant.io/integrations/http/#trusted_proxies) by adding this to your `configuration.yaml`:
 
-```
+```yaml
 http:
   use_x_forwarded_for: true
   trusted_proxies:
