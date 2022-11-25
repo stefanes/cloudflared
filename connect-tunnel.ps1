@@ -34,7 +34,7 @@ if (-Not (Test-Path -Path "$env:USERPROFILE\.cloudflared\$TunnelName.pem")) {
 else {
   Write-Host "Already logged in. To force a re-login, please remove '$env:USERPROFILE\.cloudflared\$TunnelName.pem'."
 }
-$cert ="--origincert=`"$env:USERPROFILE\.cloudflared\$TunnelName.pem`""
+$cert = "--origincert=$env:USERPROFILE\.cloudflared\$TunnelName.pem"
 
 Write-Host "Creating tunnel..." -ForegroundColor Green
 & $CloudflaredPath $cert tunnel list | Tee-Object -Variable tunnelList | Out-Null
