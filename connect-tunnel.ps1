@@ -2,7 +2,7 @@
 param (
   [Alias('Path')]
   [string] $CloudflaredPath = "$PSScriptRoot\cloudflared-windows-amd64.exe",
-  
+
   [Parameter(Mandatory = $true)]
   [Alias('Host')]
   [string] $HostName,
@@ -30,8 +30,7 @@ Write-Host "Logging in to Cloudflare..." -ForegroundColor Green
 if (-Not (Test-Path -Path "$env:USERPROFILE\.cloudflared\$TunnelName.pem")) {
   & $CloudflaredPath tunnel login
   Rename-Item -Path "$env:USERPROFILE\.cloudflared\cert.pem" -NewName "$TunnelName.pem"
-}
-else {
+} else {
   Write-Host "Already logged in. To force a re-login, please remove '$env:USERPROFILE\.cloudflared\$TunnelName.pem'."
 }
 $cert = "--origincert=$env:USERPROFILE\.cloudflared\$TunnelName.pem"
@@ -48,7 +47,7 @@ foreach ($line in $tunnelList) {
   }
 }
 if (-Not $tunnelUuid) {
-  # Create new tunnel 
+  # Create new tunnel
   & $CloudflaredPath $cert --cred-file="$env:USERPROFILE\.cloudflared\$TunnelName.json" tunnel create $TunnelName
   & $CloudflaredPath $cert tunnel list | Tee-Object -Variable tunnelList | Out-Null
   foreach ($line in $tunnelList) {
@@ -72,16 +71,6 @@ ingress:
     originRequest:
       noTLSVerify: true
 "@
-# Default services
-foreach ($additionalService in $DefaultServices) {
-  $config += @"
-
-  - hostname: $($additionalService.domain).$HostName
-    service: $($additionalService.service)
-    originRequest:
-      noTLSVerify: true
-"@
-}
 # Additional services
 foreach ($additionalService in $AdditionalServices) {
   $config += @"
@@ -92,7 +81,19 @@ foreach ($additionalService in $AdditionalServices) {
       noTLSVerify: true
 "@
 }
-# Catch all service 
+# Default services
+foreach ($additionalService in $DefaultServices) {
+  if ($AdditionalServices.domain -notcontains $additionalService.domain) {
+    $config += @"
+
+  - hostname: $($additionalService.domain).$HostName
+    service: $($additionalService.service)
+    originRequest:
+      noTLSVerify: true
+"@
+  }
+}
+# Catch all service
 $config += @"
 
   - service: http_status:404
