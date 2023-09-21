@@ -23,7 +23,12 @@ param (
   [Object] $AdditionalServices = @(),
 
   [Alias('Tunnel')]
-  [string] $TunnelName = ($HostName -replace '[^a-z0-9]', '-')
+  [string] $TunnelName = ($HostName -replace '[^a-z0-9]', '-'),
+
+  [ValidateSet('auto', 'http2', 'quic')]
+  [string] $Protocol = 'auto',
+
+  [string] $LogPath = "$env:USERPROFILE\.cloudflared"
 )
 
 Write-Host "Logging in to Cloudflare..." -ForegroundColor Green
@@ -64,7 +69,8 @@ Write-Host "Creating tunnel config..." -ForegroundColor Green
 $config = @"
 tunnel: $tunnelUuid
 credentials-file: $env:USERPROFILE\.cloudflared\$TunnelName.json
-logfile: $env:USERPROFILE\.cloudflared\$TunnelName.log
+logfile: $(Resolve-Path -Path $LogPath)\$TunnelName.log
+protocol: $Protocol
 ingress:
   - hostname: $HostName
     service: $Service
@@ -98,6 +104,7 @@ $config += @"
 
   - service: http_status:404
 "@
+$config | Out-Host
 $config | Out-File -FilePath "$env:USERPROFILE\.cloudflared\$TunnelName.yml"
 Get-Content -Path "$env:USERPROFILE\.cloudflared\$TunnelName.yml"
 
