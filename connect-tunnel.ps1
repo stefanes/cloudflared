@@ -11,7 +11,7 @@ param (
 
   [Object] $DefaultServices = @(
     @{
-      domain  = 'status'
+      domain  = 'observer'
       service = 'http://homeassistant.local:4357'
     }
     @{
