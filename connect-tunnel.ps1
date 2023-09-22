@@ -22,6 +22,10 @@ param (
 
   [Object] $AdditionalServices = @(),
 
+  [string] $CatchAllService = 'http_status:404',
+
+  [string] $MetricsServer,
+
   [Alias('Tunnel')]
   [string] $TunnelName = ($HostName -replace '[^a-z0-9]', '-'),
 
@@ -107,7 +111,7 @@ foreach ($additionalService in $DefaultServices) {
 # Catch all service
 $config += @"
 
-  - service: http_status:404
+  - service: $CatchAllService
 "@
 $config | Out-Host
 $config | Out-File -FilePath "$env:USERPROFILE\.cloudflared\$TunnelName.yml"
@@ -123,4 +127,14 @@ foreach ($additionalService in $AdditionalServices) {
 }
 
 Write-Host "Connecting tunnel..." -ForegroundColor Green
-& $CloudflaredPath $cert --no-autoupdate tunnel --config "$env:USERPROFILE\.cloudflared\$TunnelName.yml" run "$tunnelUuid"
+$runParams = @(
+  '--no-autoupdate', 'tunnel'
+  '--config', "$env:USERPROFILE\.cloudflared\$TunnelName.yml"
+)
+if ($MetricsServer) {
+  $runParams += @(
+    '--metrics', $MetricsServer
+  )
+}
+Write-Host "Command line: " -NoNewline; Write-Host "$CloudflaredPath $cert $runParams run `"$tunnelUuid`"" -ForegroundColor DarkGray
+& $CloudflaredPath $cert @runParams run "$tunnelUuid"
