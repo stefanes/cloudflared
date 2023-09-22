@@ -4,7 +4,9 @@ Connect a local Cloudflare tunnel to you network in a few easy steps.
 
 # 1. Setup your domain
 
-Setup your own domain name (e.g. example.com) and use the Clodflare nameservers. If you do not have one, you can get one for free at [Freenom](https://www.freenom.com/en/index.html?lang=en) following e.g. [this article](https://www.linkedin.com/pulse/what-do-domain-name-how-get-one-free-tobias-brenner?trk=public_post-content_share-article).
+Setup your own domain name (e.g. `example.com`) to use the Clodflare nameservers, if you do aready not have one, you can get cheap domains from [Porkbun](https://porkbun.com).
+
+[Add your domain](https://developers.cloudflare.com/fundamentals/setup/account-setup/add-site/#1--add-site-in-cloudflare) to Cloudflare and [update the nameservers](https://kb.porkbun.com/article/22-how-to-change-nameservers) to the ones you received from Cloudflare.
 
 # 2. Download cloudflared
 
@@ -46,11 +48,11 @@ Or include additional services (in addition to the default services) using the `
 
 # Home Assistant
 
-If using this with Home Assistant you need to do one more thing. Since Home Assistant blocks requests from unknown proxies/reverse proxies, you need to tell your instance to [trust Cloudflare](https://www.home-assistant.io/integrations/http/#trusted_proxies) by adding this to your `configuration.yaml`:
+If using this with Home Assistant you need to do one more thing. Since Home Assistant blocks requests from unknown proxies/reverse proxies, you need to tell your instance to [trust your host network](https://www.home-assistant.io/integrations/http/#trusted_proxies) by adding this to your `configuration.yaml`:
 
 ```yaml
 http:
   use_x_forwarded_for: true
   trusted_proxies:
-    - 172.30.33.0/24
+    - 192.168.1.0/24
 ```
