@@ -48,7 +48,7 @@ Or include additional services (in addition to the default services) using the `
 
 # Home Assistant
 
-If using this with Home Assistant you need to do one more thing. Since Home Assistant blocks requests from unknown proxies/reverse proxies, you need to tell your instance to [trust your host network](https://www.home-assistant.io/integrations/http/#trusted_proxies) by adding this to your `configuration.yaml`:
+If using this with Home Assistant you need to do one more thing. Since Home Assistant blocks requests from unknown proxies/reverse proxies, you need to tell your instance to [trust your local network](https://www.home-assistant.io/integrations/http/#trusted_proxies) by adding something like this to your `configuration.yaml`:
 
 ```yaml
 http:
