@@ -66,10 +66,15 @@ if (-Not $tunnelUuid) {
 Write-Host ($tunnelList | Out-String) -ForegroundColor DarkGray
 
 Write-Host "Creating tunnel config..." -ForegroundColor Green
+New-Item -Path $LogPath -ErrorAction Ignore
+$LogPath = $(Resolve-Path -Path $LogPath)
+if (-Not (Split-Path -Path $LogPath -Extension)) {
+  $LogPath = "$LogPath\$TunnelName.log"
+}
 $config = @"
 tunnel: $tunnelUuid
 credentials-file: $env:USERPROFILE\.cloudflared\$TunnelName.json
-logfile: $(Resolve-Path -Path $LogPath)\$TunnelName.log
+logfile: $LogPath
 protocol: $Protocol
 ingress:
   - hostname: $HostName
