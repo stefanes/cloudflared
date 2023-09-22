@@ -32,7 +32,9 @@ param (
   [ValidateSet('auto', 'http2', 'quic')]
   [string] $Protocol = 'auto',
 
-  [string] $LogPath = "$env:USERPROFILE\.cloudflared"
+  [string] $LogPath = "$env:USERPROFILE\.cloudflared",
+  [ValidateSet('debug', 'info', 'warn', 'error', 'fatal')]
+  [string] $LogLevel = 'info'
 )
 
 Write-Host "Logging in to Cloudflare..." -ForegroundColor Green
@@ -79,22 +81,33 @@ $config = @"
 tunnel: $tunnelUuid
 credentials-file: $env:USERPROFILE\.cloudflared\$TunnelName.json
 logfile: $LogPath
+loglevel: $LogLevel
 protocol: $Protocol
 ingress:
   - hostname: $HostName
     service: $Service
+"@
+if ($Service.StartsWith('https://')) {
+  $config += @"
+
     originRequest:
       noTLSVerify: true
 "@
+}
 # Additional services
 foreach ($additionalService in $AdditionalServices) {
   $config += @"
 
   - hostname: $($additionalService.domain).$HostName
     service: $($additionalService.service)
+"@
+  if ($additionalService.service.StartsWith('https://')) {
+    $config += @"
+
     originRequest:
       noTLSVerify: true
 "@
+  }
 }
 # Default services
 foreach ($additionalService in $DefaultServices) {
@@ -103,9 +116,14 @@ foreach ($additionalService in $DefaultServices) {
 
   - hostname: $($additionalService.domain).$HostName
     service: $($additionalService.service)
+"@
+    if ($additionalService.service.StartsWith('https://')) {
+      $config += @"
+
     originRequest:
       noTLSVerify: true
 "@
+    }
   }
 }
 # Catch all service
