@@ -30,7 +30,7 @@ param (
   [string] $TunnelName = ($HostName -replace '[^a-z0-9]', '-'),
 
   [ValidateSet('auto', 'http2', 'quic')]
-  [string] $Protocol = 'auto',
+  [string] $Protocol = 'http2',
 
   [string] $LogPath = "$env:USERPROFILE\.cloudflared",
   [ValidateSet('debug', 'info', 'warn', 'error', 'fatal')]
