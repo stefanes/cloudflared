@@ -4,7 +4,7 @@ Connect a local Cloudflare tunnel to you network in a few easy steps.
 
 # 1. Setup your domain
 
-Setup your own domain name (e.g. `example.com`) to use the Clodflare nameservers, if you do aready not have one, you can get cheap domains from [Porkbun](https://porkbun.com).
+Setup your own domain name (e.g. [`that-is-a.win`](https://porkbun.com/checkout/search?q=that-is-a.win)) to use the Clodflare nameservers, if you do aready not have one, you can get cheap domains from [Porkbun](https://porkbun.com).
 
 [Add your domain](https://developers.cloudflare.com/fundamentals/setup/account-setup/add-site/#1--add-site-in-cloudflare) to Cloudflare and [update the nameservers](https://kb.porkbun.com/article/22-how-to-change-nameservers) to the ones you received from Cloudflare.
 
@@ -17,13 +17,13 @@ Download and extract `cloudflared` [from Cloudflare](https://developers.cloudfla
 To connect a tunnel routing the default set of services (see [here](https://github.com/stefanes/cloudflared/blob/main/connect-tunnel.ps1#L10-L21)):
 
 ```powershell
-& .\cloudflared\connect-tunnel.ps1 -CloudflaredPath 'C:\path\to\cloudflared.exe' -HostName 'myhostname.tk'
+& .\cloudflared\connect-tunnel.ps1 -CloudflaredPath 'C:\path\to\cloudflared.exe' -HostName 'that-is-a.win'
 ```
 
 To route other services, provide your own services using the `-DefaultServices` parameter:
 
 ```powershell
-& .\cloudflared\connect-tunnel.ps1 -CloudflaredPath 'C:\path\to\cloudflared.exe' -HostName 'myhostname.tk' -Service 'http://192.168.2.100:8080' -DefaultServices @(
+& .\cloudflared\connect-tunnel.ps1 -CloudflaredPath 'C:\path\to\cloudflared.exe' -HostName 'that-is-a.win' -Service 'http://192.168.2.100:8080' -DefaultServices @(
     @{
         domain  = 'www'
         service = 'http://192.168.2.100:8080'
@@ -38,7 +38,7 @@ To route other services, provide your own services using the `-DefaultServices` 
 Or include additional services (in addition to the default services) using the `-AdditionalServices` parameter:
 
 ```powershell
-& .\cloudflared\connect-tunnel.ps1 -CloudflaredPath 'C:\path\to\cloudflared.exe' -HostName 'myhostname.tk' -Service 'http://192.168.1.100:8080' -AdditionalServices @(
+& .\cloudflared\connect-tunnel.ps1 -CloudflaredPath 'C:\path\to\cloudflared.exe' -HostName 'that-is-a.win' -Service 'http://192.168.1.100:8080' -AdditionalServices @(
     @{
         domain  = 'something'
         service = 'http://192.168.1.254'
